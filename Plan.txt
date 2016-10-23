@@ -1,0 +1,126 @@
+Implementer:
+-Utskrift til fil
+-Flere simobjekt (sine, swicth, or, and, xor, spring, ball, plane, gravity, mux, demux, cable)
+-Grafikk
+-Input fra fil
+
+---------------------------------
+
+RTS algoritme:
+1. Collision detection
+2. Collision resolution
+3. Force calculation
+4. State integration
+
+-------------------------------
+
+datastrukturer:
+
+SimObject:
+	-DynBody:
+		-Ball, Box +++
+	-StaticBody:
+		-Wall, ground, plane +++
+	-Field
+		-Wind, Ocean, Gravity +++
+	-Others: Etc. spring, source, canon
+
+------------------------------------------------------
+
+main() pseudocode: //TODO: change for graphics support.
+		   //Implement in seperate class Model as Model.init(), Model.simulate()?
+
+-Last inn alle simobject, port connections, innstillinger og initialbetingelser fra input
+	-Miljø defineres fra StaticBodys og Fields
+-Definer vektor av DynBodies, StaticBodies, Fields, Others
+
+-FOR K = 0 : simTime/stepSize {
+
+if visual : start time	
+
+
+
+FOR ALLE Fields:
+	-action()
+
+FOR ALLE Others:
+	-action()
+
+FOR ALLE DynBody:
+
+	-Collision detection:
+		-if isColliding = true, set isColliding = false, skip detection and resolution for object
+		-Sjekk skjæring av omskrevede sirkler
+		-Hvis de skjærer: sjekk skjæring av ytre linjer som definerer geometrien
+		-Hvis de skjærer: sett isColliding = true for begge objekt.
+	-Collision resolution:
+		-Beregn ny farts- og rotasjonsvektor fra ligning fra artikkel (elastisk)
+		 for begge objekt
+	-Force calculation:
+		-Beregn feltkrefter
+		-Hent portkrefter
+		-Beregn øvrige krefter (ladning mellom to kuler etc)
+	-State integration
+		-Beregn a fra CalcForce()
+		-Kall RKSolver(vel)
+		-Kall RKSolver(pos)
+	-Other tasks:
+		-Call action()
+		-If log: log
+
+
+else: continue
+
+}
+
+--------------------------
+
+Dynamic cable algorithm:
+
+-Define cable with fixed ends, consisting of n equal elements.
+-Modelled with infinite tensile stiffness, no bending stiffness
+-Loads are modelled as constant over a cable element
+-Given fixed ends:(A[x,y], B[x,y])
+- Given initial values r1[x,y], ... , r(n-1)[x,y] and v1[x,y], ... , v(n-1)[x,y]
+-Algorithm priciple:
+	-(n-1) pointmasses where the relative acceleration between two 
+	 adjecent pointmasses paralell to the line between them is zero
+
+ALGORITHM:
+
+-Calculate the unit vectors between all points u1, ... , un
+
+-Calculate loads L1, ... , L(n-1) as pointload / distributed load * elementlength
+
+-Establish system of linear equations to calculate tensile forces S1, ... , Sn
+	-No axisparallell acceleration of first and last point
+	-No relative, axisparallell acceleration for the intermediate points
+	-Write in matrixform
+	-Solve using row reduction to obtain S1, ... , Sn
+
+For all points i:
+
+	-Calculate sigmaF:
+		-sigmaF = Li + Si*ui + S(i+1)*u(i+1)
+	-Calculate acceleration as sigmaF/element mass
+
+	-Integrate using RKSolver to obtain new ri[x,y] and vi[x,y]
+
+------------------------------------------
+
+Random thougths:
+Use jblas for linear algebra
+Use double[] for class fields, convert to DoubleMatrix for scientific calcs
+Use awt/swing for graphics
+Tips herfra: https://www.youtube.com/watch?v=VE7ezYCTPe4
+(VURDER: Bruke c++ og SDL i stedet for java og java2D? Foreløpig nei)
+Maybe General paths from Java2D is suitable for cable objects
+transform pixel to meters using scale
+rotate and translate graphics using transformations
+use transparency to visualize bodies submerged in water
+RTS algoritme: http://www.idt.mdh.se/kurser/ct3340/archives/ht08/papersRM08/4.pdf
+vP = vO + ω × rP
+aP = aO + ω˙ × rP + ω × (ω × rP )
+
+
+--------------------------------------------------------

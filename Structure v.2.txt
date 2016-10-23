@@ -1,0 +1,32 @@
+Classes:
+
+Methods:
+	Static methods: simLoop(model), dynamicCalc(model), RKSolver,
+
+Simulation
+	Methods: static main()
+Model
+	Fields: step, logStep, visualization, winWidth, winHeigth, simObjs, dynObjs, staticObjs, fields, others, visuals
+	Methods: Model(step, logStep, vis, simObjs, winWIDTH, winHEIGTH), idfyObjs(simObjs), getters and setters
+VisualSim
+	Fields: model
+	Methods: VisualSim(model), paintComponent(graphics g)
+
+main() detailed:
+
+-create Model object, eiher by manually setting each field, or calling parseInputFile(path)
+	-Engine, visalisation setting from constructor arguments
+-for all simObjs: init()
+
+-if Model.visualization:
+	-Create JFrame ..... 
+	-add (new VisualSim(model))
+
+-else: Run simLoop(model)
+
+
+VisualSim(mod) detailed:
+
+
+
+

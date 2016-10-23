@@ -1,0 +1,6 @@
+jscience.jar
+
+bin/*
+*.project
+*.classpath
+.settings/*
